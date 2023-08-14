@@ -37,7 +37,7 @@ export default class VenueChart extends PureComponent<{}, VenueChartState> {
   }
 
   componentDidMount() {
-    fetch("http://localhost:3000/api/venue")
+    fetch("/api/venue")
       .then((response) => response.json())
       .then((data) => {
         this.setState({ venues: data.venues })
