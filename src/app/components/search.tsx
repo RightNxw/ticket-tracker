@@ -48,12 +48,10 @@ export function SearchBox() {
   const [open, setOpen] = React.useState(false)
   const [value, setValue] = React.useState<number | string>("")
   const [events, setEvents] = React.useState<FormattedVenue[]>([])
-  const [originalVenues, setOriginalVenues] = React.useState<Venue[]>([])
 
   async function fetchEvents() {
     const response = await fetch("/api/venue")
     const data = await response.json()
-    setOriginalVenues(data.venues)
     const formattedData = formatVenueData(data.venues)
     setEvents(formattedData)
   }
@@ -91,15 +89,10 @@ export function SearchBox() {
                 key={event.value.toString()}
                 onSelect={() => {
                   setValue(event.value)
-                  const fullVenueData = originalVenues.find(
-                    (venue) => venue.id === event.value
-                  )
-                  if (fullVenueData) {
-                    localStorage.setItem(
-                      "selectedEvent",
-                      JSON.stringify(fullVenueData)
-                    )
-                  }
+                  const queryParams = new URLSearchParams({
+                    selectedEvent: JSON.stringify(event.value),
+                  })
+                  window.history.replaceState({}, "", `?${queryParams}`)
                   setOpen(false)
                 }}
               >

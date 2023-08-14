@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useEffect, useState } from "react"
+import { useSearchParams } from "next/navigation"
 import {
   CartesianGrid,
   Legend,
@@ -31,13 +32,21 @@ type Venue = {
 
 export function VenueChart() {
   const [selectedVenue, setSelectedVenue] = useState<Venue | null>(null)
+  const searchParams = useSearchParams()
+  const selectedEventParam = searchParams.get("selectedEvent")
 
   useEffect(() => {
-    const storedVenue = localStorage.getItem("selectedEvent")
-    if (storedVenue) {
-      setSelectedVenue(JSON.parse(storedVenue))
+    if (selectedEventParam) {
+      fetch("/api/venue?id=" + selectedEventParam)
+        .then((response) => response.json())
+        .then((data) => {
+          setSelectedVenue(data)
+        })
+        .catch((error) => {
+          console.error("Error fetching venue data:", error)
+        })
     }
-  }, [])
+  }, [selectedEventParam])
 
   const formatDate = (timestamp: number) => {
     const date = new Date(timestamp)
