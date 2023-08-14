@@ -14,8 +14,21 @@ import {
 
 const backgroundColor = "var(--background)"
 const textColor = "var(--foreground)"
+type VenueChartState = {
+  venues: Array<{
+    artist: string
+    stadium: string
+    date: {
+      day: string
+      time: string
+    }
+    updated: any[] // Use a more specific type if possible
+    minPrice: number[]
+    ticketCount: number[]
+  }>
+}
 
-export default class VenueChart extends PureComponent {
+export default class VenueChart extends PureComponent<{}, VenueChartState> {
   constructor(props: any) {
     super(props)
     this.state = {
@@ -92,7 +105,7 @@ export default class VenueChart extends PureComponent {
                     <Line
                       type="monotone"
                       dataKey="ticketCount"
-                      stroke="rgb(59 130 246 / 0.5)" // Purple color for ticketCount
+                      stroke="rgb(59 130 246 / 0.5)"
                     />
                   </LineChart>
                 </ResponsiveContainer>
