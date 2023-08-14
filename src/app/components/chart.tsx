@@ -1,6 +1,6 @@
 "use client"
 
-import React, { PureComponent } from "react"
+import React, { useEffect, useState } from "react"
 import {
   CartesianGrid,
   Legend,
@@ -14,40 +14,32 @@ import {
 
 const backgroundColor = "var(--background)"
 const textColor = "var(--foreground)"
-type VenueChartState = {
-  venues: Array<{
-    artist: string
-    stadium: string
-    date: {
-      day: string
-      time: string
-    }
-    updated: any[] // Use a more specific type if possible
-    minPrice: number[]
-    ticketCount: number[]
-  }>
+
+type Venue = {
+  id: number
+  artist: string
+  stadium: string
+  vividUrl: string
+  date: {
+    day: string
+    time: string
+  }
+  updated: number[]
+  minPrice: number[]
+  ticketCount: number[]
 }
 
-export default class VenueChart extends PureComponent<{}, VenueChartState> {
-  constructor(props: any) {
-    super(props)
-    this.state = {
-      venues: [],
+export function VenueChart() {
+  const [selectedVenue, setSelectedVenue] = useState<Venue | null>(null)
+
+  useEffect(() => {
+    const storedVenue = localStorage.getItem("selectedEvent")
+    if (storedVenue) {
+      setSelectedVenue(JSON.parse(storedVenue))
     }
-  }
+  }, [])
 
-  componentDidMount() {
-    fetch("/api/venue")
-      .then((response) => response.json())
-      .then((data) => {
-        this.setState({ venues: data.venues })
-      })
-      .catch((error) => {
-        console.error("Error fetching the data", error)
-      })
-  }
-
-  formatDate(timestamp: any) {
+  const formatDate = (timestamp: number) => {
     const date = new Date(timestamp)
     const hours = date.getHours()
     const minutes = date.getMinutes()
@@ -59,61 +51,57 @@ export default class VenueChart extends PureComponent<{}, VenueChartState> {
     }/${date.getDate()}/${date.getFullYear()} ${formattedTime}`
   }
 
-  render() {
-    return (
-      <div>
-        {this.state.venues.map((venue: any, idx: any): any => {
-          const chartData = venue.updated.map((timestamp: any, index: any) => ({
-            date: this.formatDate(timestamp),
-            minPrice: venue.minPrice[index],
-            ticketCount: venue.ticketCount[index],
-          }))
-
-          return (
-            <div key={idx} className="mb-8">
-              <h2>
-                {venue.artist} at {venue.stadium} on {venue.date.day},{" "}
-                {venue.date.time}
-              </h2>
-              <div className="h-[300px]">
-                <ResponsiveContainer>
-                  <LineChart
-                    data={chartData}
-                    margin={{
-                      top: 5,
-                      right: 30,
-                      left: 20,
-                      bottom: 5,
-                    }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="date" />
-                    <YAxis />
-                    <Tooltip
-                      contentStyle={{
-                        color: textColor,
-                        backgroundColor: backgroundColor,
-                      }}
-                    />
-                    <Legend />
-                    <Line
-                      type="monotone"
-                      dataKey="minPrice"
-                      stroke="rgb(59 130 246 / 0.5)"
-                      activeDot={{ r: 8 }}
-                    />
-                    <Line
-                      type="monotone"
-                      dataKey="ticketCount"
-                      stroke="rgb(59 130 246 / 0.5)"
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-          )
-        })}
-      </div>
-    )
+  if (!selectedVenue) {
+    return <div>Select an event to view its chart.</div>
   }
+
+  const chartData = selectedVenue.updated.map((timestamp, index) => ({
+    date: formatDate(timestamp),
+    minPrice: selectedVenue.minPrice[index],
+    ticketCount: selectedVenue.ticketCount[index],
+  }))
+
+  return (
+    <div>
+      <h2>
+        {selectedVenue.artist} at {selectedVenue.stadium} on{" "}
+        {selectedVenue.date.day}, {selectedVenue.date.time}
+      </h2>
+      <div className="h-[300px]">
+        <ResponsiveContainer>
+          <LineChart
+            data={chartData}
+            margin={{
+              top: 5,
+              right: 30,
+              left: 20,
+              bottom: 5,
+            }}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="date" />
+            <YAxis />
+            <Tooltip
+              contentStyle={{
+                color: textColor,
+                backgroundColor: backgroundColor,
+              }}
+            />
+            <Legend />
+            <Line
+              type="monotone"
+              dataKey="minPrice"
+              stroke="rgb(59 130 246 / 0.5)"
+              activeDot={{ r: 8 }}
+            />
+            <Line
+              type="monotone"
+              dataKey="ticketCount"
+              stroke="rgb(59 130 246 / 0.5)"
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  )
 }

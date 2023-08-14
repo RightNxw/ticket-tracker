@@ -1,4 +1,4 @@
-import VenueChart from "@/src/app/components/chart"
+import { VenueChart } from "@/src/app/components/chart"
 
 export default function IndexPage() {
   return (
