@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { useSearchParams } from "next/navigation"
 import {
   CartesianGrid,
@@ -100,13 +100,14 @@ export function VenueChart() {
             <Line
               type="monotone"
               dataKey="minPrice"
-              stroke="rgb(59 130 246 / 0.5)"
-              activeDot={{ r: 8 }}
+              stroke="rgb(255, 0, 0, 0.5)"
+              dot={false}
             />
             <Line
               type="monotone"
               dataKey="ticketCount"
               stroke="rgb(59 130 246 / 0.5)"
+              dot={false}
             />
           </LineChart>
         </ResponsiveContainer>

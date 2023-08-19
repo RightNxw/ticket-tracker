@@ -1,4 +1,4 @@
-import * as React from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/src/app/components/ui/button"
 import {
   Command,
@@ -44,26 +44,37 @@ function formatVenueData(venues: Venue[]): FormattedVenue[] {
   })
 }
 
-export function SearchBox() {
-  const [open, setOpen] = React.useState(false)
-  const [value, setValue] = React.useState<number | string>("")
-  const [events, setEvents] = React.useState<FormattedVenue[]>([])
+export function SearchBox({ defaultValue }: any) {
+  const [open, setOpen] = useState(false)
+  const [value, setValue] = useState<number | string>("")
+  const [events, setEvents] = useState<FormattedVenue[]>([])
+  const [date, setDate] = useState<string>("")
 
   async function fetchEvents() {
     const response = await fetch("/api/venue")
     const data = await response.json()
     const formattedData = formatVenueData(data.venues)
     setEvents(formattedData)
+    setValue(defaultValue)
   }
 
   const selectedEvent = events.find((event) => event.value === value)
   const selectedDate = selectedEvent
     ? selectedEvent.label.split(" on ")[1].split(" at ")[0]
-    : ""
+    : date
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetchEvents()
   }, [])
+
+  useEffect(() => {
+    const selectedEvent = events.find((event) => event.value == value)
+    const selectedDate = selectedEvent
+      ? selectedEvent.label.split(" on ")[1].split(" at ")[0]
+      : date
+
+    setDate(selectedDate)
+  }, [value])
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -79,7 +90,7 @@ export function SearchBox() {
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0">
+      <PopoverContent className="w-[200px] p-0 overflow-y-auto max-h-[300px]">
         <Command>
           <CommandInput placeholder="Search event..." />
           <CommandEmpty>No event found.</CommandEmpty>
@@ -94,6 +105,7 @@ export function SearchBox() {
                   })
                   window.history.replaceState({}, "", `?${queryParams}`)
                   setOpen(false)
+                  window.location.reload()
                 }}
               >
                 <Check

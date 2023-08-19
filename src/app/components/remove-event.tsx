@@ -1,4 +1,4 @@
-import * as React from "react"
+import { FormEvent, useState } from "react"
 import { Button } from "@/src/app/components/ui/button"
 import {
   Card,
@@ -22,11 +22,11 @@ const toastStyle = {
 }
 
 export function CardWithFormRemove() {
-  const [venueId, setVenueId] = React.useState("")
+  const [venueId, setVenueId] = useState("")
 
   const isFormValid = venueId.trim() !== ""
 
-  async function onSubmit(event: React.FormEvent) {
+  async function onSubmit(event: FormEvent) {
     event.preventDefault()
 
     if (!isFormValid) {

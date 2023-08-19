@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useSearchParams } from "next/navigation"
 import { Icons } from "@/src/app/components/icons"
 import { MainNav } from "@/src/app/components/main-nav"
 import { ThemeToggle } from "@/src/app/components/theme-toggle"
@@ -12,14 +12,17 @@ import { SearchBox } from "./search"
 
 export function SiteHeader() {
   const pathname = usePathname()
-
+  const searchParams = useSearchParams()
+  const selectedEventParam = searchParams.get("selectedEvent")
   return (
     <header className="bg-background sticky top-0 z-40 w-full border-b">
       <div className="container flex h-16 items-center space-x-4 sm:justify-between sm:space-x-0">
         <MainNav items={siteConfig.mainNav} />
         <div className="flex flex-1 items-center justify-end space-x-4">
           <nav className="flex items-center space-x-1">
-            {pathname === "/" && <SearchBox />}
+            {pathname === "/" && (
+              <SearchBox defaultValue={selectedEventParam} />
+            )}
             <Link
               href={siteConfig.links.github}
               target="_blank"
