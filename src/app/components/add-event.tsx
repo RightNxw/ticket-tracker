@@ -35,7 +35,6 @@ export function CardWithFormAdd() {
       return
     }
 
-    // Making the API call
     try {
       const response = await fetch("/api/event", {
         method: "POST",

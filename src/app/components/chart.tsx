@@ -73,8 +73,14 @@ export function VenueChart() {
   return (
     <div>
       <h2>
-        {selectedVenue.artist} at {selectedVenue.stadium} on{" "}
-        {selectedVenue.date.day}, {selectedVenue.date.time}
+        <a
+          href={selectedVenue.vividUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {selectedVenue.artist} at {selectedVenue.stadium} on{" "}
+          {selectedVenue.date.day}, {selectedVenue.date.time}
+        </a>
       </h2>
       <div className="h-[300px]">
         <ResponsiveContainer>
