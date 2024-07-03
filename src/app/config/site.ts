@@ -16,6 +16,6 @@ export const siteConfig = {
   ],
   links: {
     twitter: "https://twitter.com/",
-    github: "https://github.com/RightNxw/ticket-tracker
+    github: "https://github.com/RightNxw/ticket-tracker"
   },
 }
